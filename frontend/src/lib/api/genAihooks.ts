@@ -3,8 +3,9 @@ import axios from "axios";
 import { toast } from "sonner";
 
 // Create a pre-configured axios instance
+const API_URL = import.meta.env.VITE_API_URL;
 const api = axios.create({
-  baseURL: "http://localhost:3000/api/genai", // Set your API base URL if needed
+  baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,7 +33,7 @@ export function useGenerateTranscript(
       try {
         const isFormData = input instanceof FormData;
         const response = await api.post<TranscriptResponse>(
-          "/generate/transcript",
+          "/genai/generate/transcript",
           input,
           {
             headers: {
@@ -65,7 +66,7 @@ export function useSegmentTranscript(
 ) {
   return useMutation<SegmentResponse, unknown, { transcript: string }>({
     mutationFn: async ({ transcript }) => {
-      const response = await api.post<SegmentResponse>("/generate/transcript/segment", {
+      const response = await api.post<SegmentResponse>("/genai/generate/transcript/segment", {
         transcript,
       });
       return response.data;
@@ -93,7 +94,7 @@ export function useGenerateQuestions(
   return useMutation<GenerateQuestionsResponse, unknown, GenerateQuestionsInput>({
     mutationFn: async ({segments, questionsPerSegment = 2, model }) => {
       try {
-        const response = await api.post<GenerateQuestionsResponse>("/generate/questions", {
+        const response = await api.post<GenerateQuestionsResponse>("/genai/generate/questions", {
           segments,
           globalQuestionSpecification: [{ count: questionsPerSegment }],
           model,

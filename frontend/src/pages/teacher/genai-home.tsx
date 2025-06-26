@@ -328,27 +328,27 @@ export default function GenAIHomePage() {
             </ol>
             <label htmlFor="qps" className="text-sm font-medium">Questions per Segment</label>
             <Input
-            id="qps"
-            type="number"
-            min={1}
-            value={questionsPerSegment}
-            onChange={(e) => setQuestionsPerSegment(parseInt(e.target.value) || 1)}
-            className="border rounded p-2 text-sm w-24"
-            placeholder="e.g. 2"
+              id="qps"
+              type="number"
+              min={1}
+              value={questionsPerSegment}
+              onChange={(e) => setQuestionsPerSegment(parseInt(e.target.value) || 1)}
+              className="border rounded p-2 text-sm w-24"
+              placeholder="e.g. 2"
             />
-          <Button
-            onClick={() =>
-              generateQuestions({
-                segments,
-                questionsPerSegment,
-              })}
-            disabled={isQuestionsPending}
-          >
-            {isQuestionsPending ? "Generating..." : "Generate Questions"}
-          </Button>
-        </CardContent>
-      </Card>
-    )}
+            <Button
+              onClick={() =>
+                generateQuestions({
+                  segments,
+                  questionsPerSegment,
+                })}
+              disabled={isQuestionsPending}
+            >
+              {isQuestionsPending ? "Generating..." : "Generate Questions"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {questions.length > 0 && (
         <Card>
