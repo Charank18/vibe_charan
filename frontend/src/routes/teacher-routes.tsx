@@ -6,7 +6,7 @@ import Editor from "@/pages/teacher/create-article";
 import FaceDetectors from "@/pages/testing-proctoring/face-detectors";
 import GetCourse from "@/pages/teacher/get-course";
 import GenAIHomePage from "@/pages/teacher/genai-home";
-import LiveQuiz from "@/pages/teacher/live-quiz";
+import TeacherPoll from "@/pages/teacher/LivePoll";
 
 const teacherRoutes: RouteObject = {
   path: "/teacher",
@@ -41,8 +41,8 @@ const teacherRoutes: RouteObject = {
       element: <GenAIHomePage />,
     },
     {
-      path: "live-quiz",
-      element: <LiveQuiz />,
+      path: "livepoll",
+      element: <TeacherPoll />,
     },
   ],
 };

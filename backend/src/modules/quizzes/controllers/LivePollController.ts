@@ -1,52 +1,73 @@
 import {
-  JsonController, Post, Body, Get, Param, CurrentUser, Authorized
+  JsonController, Post, Body, Get, Param
 } from 'routing-controllers';
 import { inject, injectable } from 'inversify';
 import { LivePollService } from '../services/LivePollService.js';
 import { LivePollInput } from '../types.js';
 import { QUIZZES_TYPES } from '../types.js';
-import { Server } from 'socket.io';
 
 @injectable()
-@JsonController('/quizzes')
+@JsonController('/quizzes/live-poll')
 export class LivePollController {
   constructor(
-    @inject(QUIZZES_TYPES.LivePollService) private pollService: LivePollService,
-    @inject('SocketIO') private io: Server
+    @inject(QUIZZES_TYPES.LivePollService)
+    private pollService: LivePollService
   ) {}
 
-  @Authorized(['teacher'])
-  @Post('/live-poll')
-  async createLivePoll(@Body() body: LivePollInput, @CurrentUser() user: any) {
-    const poll = this.pollService.create(body, user.id);
-    this.io.emit('new_poll', poll);
-
-    setTimeout(() => {
-      this.io.emit('poll_timeout', { pollId: poll.id });
-    }, poll.duration * 1000);
-
-    return { message: 'Poll created', poll };
+  @Post('/')
+  createPoll(@Body() input: LivePollInput & { teacherId: string }) {
+    return this.pollService.createPoll(input, input.teacherId);
   }
 
-  @Get('/live-poll/active')
+  @Get('/active')
   getActivePoll() {
-    return this.pollService.getActive();
+    return this.pollService.getActivePoll();
   }
 
-  @Authorized(['student'])
-  @Post('/live-poll/answer')
-  submitPollAnswer(
-    @Body() body: { pollId: string; answerIndex: number },
-    @CurrentUser() user: any
-  ) {
-    const success = this.pollService.submitAnswer(body.pollId, user.id, body.answerIndex);
+  @Post('/answer')
+  submitAnswer(@Body() body: { pollId: string; answerIndex: number; userId: string }) {
+    const success = this.pollService.submitAnswer(body.pollId, body.userId, body.answerIndex);
     return { success };
   }
 
-  @Authorized(['teacher'])
-  @Get('/live-poll/results/:id')
+  @Get('/results/:id')
   getResults(@Param('id') id: string) {
-    const results = this.pollService.getResults(id);
-    return results;
+    return this.pollService.getResults(id);
   }
 }
+
+// Comment the above code and Uncomment the following code if you want to use authorization
+
+//@injectable()
+//@JsonController('/quizzes/live-poll')
+//export class LivePollController {
+//  constructor(
+//    @inject(QUIZZES_TYPES.LivePollService)
+//    private pollService: LivePollService
+//  ) {}
+
+//  @Authorized(['admin', 'instructor'])
+//  @Post('/')
+//  createPoll(@Body() input: LivePollInput, @CurrentUser() user: any) {
+//    return this.pollService.createPoll(input, user.id);
+//  }
+
+//  @Authorized(['admin', 'student'])
+//  @Get('/active')
+//  getActivePoll() {
+//    return this.pollService.getActivePoll();
+//  }
+
+//  @Authorized(['admin', 'student'])
+//  @Post('/answer')
+//  submitAnswer(@Body() body: { pollId: string; answerIndex: number }, @CurrentUser() user: any) {
+//    const success = this.pollService.submitAnswer(body.pollId, user.id, body.answerIndex);
+//    return { success };
+//  }
+
+//  @Authorized(['admin', 'instructor', 'student'])
+//  @Get('/results/:id')
+//  getResults(@Param('id') id: string) {
+//    return this.pollService.getResults(id);
+//  }
+//}

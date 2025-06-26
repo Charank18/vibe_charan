@@ -12,46 +12,51 @@ interface PollAnswer {
 export class LivePollService {
   private activePoll: LivePoll | null = null;
   private pollAnswers: PollAnswer[] = [];
-
-  create(input: LivePollInput, teacherId: string): LivePoll {
-    const poll: LivePoll = {
+    createPoll(input: LivePollInput, teacherId: string): LivePoll {
+      const poll: LivePoll = {
       id: generatePollId(),
       question: input.question,
       options: input.options,
-      duration: input.duration ?? 60,
+      duration: input.duration || 60,
       createdBy: teacherId,
       createdAt: Date.now(),
     };
     this.activePoll = poll;
-    this.pollAnswers = [];
+    this.pollAnswers = []; // Reset
     return poll;
   }
 
-  getActive(): LivePoll | null {
+  getActivePoll(): LivePoll | null {
     if (!this.activePoll) return null;
-
     const expired = Date.now() > this.activePoll.createdAt + this.activePoll.duration * 1000;
     return expired ? null : this.activePoll;
   }
 
   submitAnswer(pollId: string, userId: string, answerIndex: number): boolean {
-    const existing = this.pollAnswers.find(a => a.userId === userId && a.pollId === pollId);
-    if (existing) return false;
+    const already = this.pollAnswers.find(ans => ans.pollId === pollId && ans.userId === userId);
+    if (already) return false;
     this.pollAnswers.push({ pollId, userId, answerIndex });
     return true;
   }
 
-  getResults(pollId: string): Record<string, number> {
-    if (!this.activePoll || this.activePoll.id !== pollId) return {};
+getResults(pollId: string): Record<string, { count: number; users: string[] }> {
+  const poll = this.activePoll;
+  if (!poll || poll.id !== pollId) return {};
+  const result: Record<string, { count: number; users: string[] }> = {};
 
-    const counts = Array(this.activePoll.options.length).fill(0);
-    this.pollAnswers.forEach(a => {
-      if (a.pollId === pollId) counts[a.answerIndex]++;
-    });
+  // Initialize result object for each option
+  poll.options.forEach(opt => {
+    result[opt] = { count: 0, users: [] };
+  });
 
-    return this.activePoll.options.reduce((acc, option, index) => {
-      acc[option] = counts[index];
-      return acc;
-    }, {} as Record<string, number>);
+  for (const ans of this.pollAnswers) {
+    if (ans.pollId === pollId) {
+      const option = poll.options[ans.answerIndex];
+      result[option].count++;
+      result[option].users.push(ans.userId); // You can map userId to userName if needed
+    }
   }
+  return result;
+}
+
 }

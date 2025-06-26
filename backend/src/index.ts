@@ -10,17 +10,8 @@ import {loadAppModules} from './bootstrap/loadModules.js';
 import {printStartupSummary} from './utils/logDetails.js';
 import type { CorsOptions } from 'cors';
 import { currentUserChecker } from './shared/functions/currentUserChecker.js';
-import http from 'http'; 
-import { Server as SocketIOServer } from 'socket.io';
 
 const app = express();
-const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  cors: {
-    origin: '*', // Or use appConfig.origins
-    methods: ['GET', 'POST'],
-  },
-});
 
 app.use(loggingHandler);
 
@@ -57,6 +48,6 @@ app.use(
 
 // Start server
 useExpressServer(app, moduleOptions);
-server.listen(appConfig.port, () => {
+app.listen(appConfig.port, () => {
   printStartupSummary();
 });

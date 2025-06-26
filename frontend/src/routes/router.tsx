@@ -30,7 +30,8 @@ import FaceDetectors from '@/pages/testing-proctoring/face-detectors'
 import { NotFoundComponent } from '@/components/not-found'
 import { useCourseStore } from '@/lib/store/course-store'
 import GenAIHomePage from '@/pages/teacher/genai-home'
-import LiveQuiz from '@/pages/teacher/live-quiz'
+import TeacherPoll from '@/pages/teacher/LivePoll'
+import StudentPoll from '@/pages/student/StudentPoll'
 
 const sampleText = `
 # 🌟 Sample Markdown Document
@@ -271,11 +272,11 @@ const teacherGenAIHomeRoute = new Route({
   component: GenAIHomePage,
 });
 
-// Teacher live quiz route
-const teacherLiveQuizRoute = new Route({
+// Teacher live poll route
+const teacherLivePollRoute = new Route({
   getParentRoute: () => teacherLayoutRoute,
-  path: '/live-quiz',
-  component: LiveQuiz,
+  path: '/livepoll',
+  component: TeacherPoll,
 });
 
 // Teacher create course route
@@ -345,6 +346,13 @@ const quizRoute = new Route({
   component: () => <ItemContainer item={{name:"abc", itemtype:"quiz", content:"This is a sample quiz content."} as Item} courseId="A" courseVersionId="B" userId="C" />
 });
 
+// Student live poll route
+const studentLivePollRoute = new Route({
+  getParentRoute: () => studentLayoutRoute,
+  path: '/livepoll',
+  component: StudentPoll,
+});
+
 // const parentComponentRoute = new Route({
 //   getParentRoute: () => studentLayoutRoute,
 //   path: '/test-ai',
@@ -391,7 +399,7 @@ const routeTree = rootRoute.addChildren([
     teacherGetCourseRoute,
     teacherTestingRoute,
     teacherGenAIHomeRoute,
-    teacherLiveQuizRoute,
+    teacherLivePollRoute,
   ]),
   studentLayoutRoute.addChildren([
     studentDashboardRoute,
@@ -400,6 +408,7 @@ const routeTree = rootRoute.addChildren([
     articleRoute,
     videoRoute,
     quizRoute,
+    studentLivePollRoute,
     // parentComponentRoute,
   ]),
   coursePageRoute,

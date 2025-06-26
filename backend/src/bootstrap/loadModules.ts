@@ -3,14 +3,13 @@ import path from 'path';
 import {Container, ContainerModule} from 'inversify';
 import {useContainer} from 'routing-controllers';
 import {InversifyAdapter} from '#root/inversify-adapter.js';
-import type { Server as SocketIOServer } from 'socket.io';
 
 interface LoadedModuleResult {
   controllers: Function[];
   validators: Function[];
 }
 
-export async function loadAppModules(moduleName: string, io?: SocketIOServer): Promise<LoadedModuleResult> {
+export async function loadAppModules(moduleName: string): Promise<LoadedModuleResult> {
   const isAll = moduleName === 'all';
   const modulesDir = path.resolve('./src/modules');
   const files = await fs.readdir(modulesDir);
@@ -42,9 +41,6 @@ export async function loadAppModules(moduleName: string, io?: SocketIOServer): P
       
       const container = new Container();
       await setupContainer(container); // pass container to allow injection
-      if (io) {
-        container.bind('SocketIO').toConstantValue(io);
-      }
       const inversifyAdapter = new InversifyAdapter(container);
       useContainer(inversifyAdapter);
     }
@@ -53,9 +49,6 @@ export async function loadAppModules(moduleName: string, io?: SocketIOServer): P
   if (isAll) {
     const uniqueModules = Array.from(new Set(allContainerModules));
     const container = new Container();
-    if (io) {
-      container.bind('SocketIO').toConstantValue(io);
-    }
     await container.load(...uniqueModules);
     const inversifyAdapter = new InversifyAdapter(container);
     useContainer(inversifyAdapter);
