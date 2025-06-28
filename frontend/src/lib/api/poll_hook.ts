@@ -1,4 +1,4 @@
-export async function createPoll(data: {
+export async function useCreatePoll(data: {
   question: string;
   options: string[];
   creatorId: string;

@@ -7,7 +7,8 @@ import ItemContainer from "@/components/Item-container";
 import CoursePage from "@/pages/student/course-page";
 // import ParentComponent from "@/ai-components/ParentComponent";
 import { Item } from "@/components/Item-container"; // Assuming Item is defined in Item-container
-import StudentPoll from "@/pages/student/StudentPoll"; // Importing the StudentPoll component
+import StudentPoll from "@/pages/student/StudentPoll";
+import JoinRoom from "@/pages/student/join-room"; // <-- Import the JoinRoom page
 
 const studentRoutes: RouteObject = {
   path: "/student",
@@ -44,6 +45,10 @@ const studentRoutes: RouteObject = {
     {
       path: "livepoll",
       element: <StudentPoll />,
+    },
+    {
+      path: "join-room", // <-- Add this route for students to join a room and attempt polls
+      element: <JoinRoom />,
     },
     {
       index: true,

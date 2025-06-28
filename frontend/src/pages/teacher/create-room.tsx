@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useCreateRoom } from "@/lib/api/hooks/rooms";
-import { useCreatePoll } from "@/lib/api/hooks/polls";
+import { useCreateRoom } from "@/lib/api/room_hook";
+import { useCreatePoll } from "@/lib/api/poll_hook";
 
 export default function CreateRoom() {
   const [roomName, setRoomName] = useState("");
@@ -17,45 +17,54 @@ export default function CreateRoom() {
   const [pollSuccess, setPollSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createRoomMutation = useCreateRoom();
-  const createPollMutation = useCreatePoll();
+  // Loading states
+  const [roomLoading, setRoomLoading] = useState(false);
+  const [pollLoading, setPollLoading] = useState(false);
 
   const handleRoomSubmit = async () => {
     setError(null);
     setRoomSuccess(false);
+    setRoomLoading(true);
 
     if (!roomName || !teacherId) {
       setError("Room Name and Teacher ID are required.");
+      setRoomLoading(false);
       return;
     }
 
     try {
-      const room = await createRoomMutation.mutateAsync({ name: roomName, teacherId });
+      const room = await useCreateRoom({ name: roomName, teacherId });
       setRoomCode(room.code);
       setRoomSuccess(true);
       setRoomName("");
       setTeacherId("");
     } catch (err) {
       setError("Failed to create room.");
+    } finally {
+      setRoomLoading(false);
     }
   };
 
   const handlePollSubmit = async () => {
     setError(null);
     setPollSuccess(false);
+    setPollLoading(true);
 
     if (!question || options.some(opt => !opt) || !roomCode) {
       setError("Please complete all fields for the poll.");
+      setPollLoading(false);
       return;
     }
 
     try {
-      await createPollMutation.mutateAsync({ question, options, roomCode, creatorId: teacherId });
+      await useCreatePoll({ question, options, roomCode, creatorId: teacherId });
       setPollSuccess(true);
       setQuestion("");
       setOptions(["", ""]);
     } catch {
       setError("Failed to create poll. Please try again.");
+    } finally {
+      setPollLoading(false);
     }
   };
 
@@ -81,8 +90,8 @@ export default function CreateRoom() {
             value={teacherId}
             onChange={(e) => setTeacherId(e.target.value)}
           />
-          <Button onClick={handleRoomSubmit} disabled={createRoomMutation.isPending}>
-            {createRoomMutation.isPending ? "Creating..." : "Create Room"}
+          <Button onClick={handleRoomSubmit} disabled={roomLoading}>
+            {roomLoading ? "Creating..." : "Create Room"}
           </Button>
           {roomSuccess && <p className="text-green-600">Room created successfully!</p>}
         </Card>
@@ -121,9 +130,9 @@ export default function CreateRoom() {
 
           <Button
             onClick={handlePollSubmit}
-            disabled={!roomCode || createPollMutation.isPending}
+            disabled={!roomCode || pollLoading}
           >
-            {createPollMutation.isPending ? "Creating..." : "Create Poll"}
+            {pollLoading ? "Creating..." : "Create Poll"}
           </Button>
           {pollSuccess && <p className="text-green-600">Poll created successfully!</p>}
         </Card>

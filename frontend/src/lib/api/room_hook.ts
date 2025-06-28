@@ -1,4 +1,4 @@
-export async function createRoom(data: {
+export async function useCreateRoom(data: {
   name: string;
   teacherId: string;
 }) {
