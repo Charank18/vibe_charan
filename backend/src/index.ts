@@ -10,6 +10,7 @@ import {loadAppModules} from './bootstrap/loadModules.js';
 import {printStartupSummary} from './utils/logDetails.js';
 import type { CorsOptions } from 'cors';
 import { currentUserChecker } from './shared/functions/currentUserChecker.js';
+import { pollSocket } from './modules/livequizzes/utils/PollSocket.js';
 
 const app = express();
 
@@ -48,6 +49,8 @@ app.use(
 
 // Start server
 useExpressServer(app, moduleOptions);
-app.listen(appConfig.port, () => {
+const server = app.listen(appConfig.port, () => {
   printStartupSummary();
 });
+
+pollSocket.init(server); // For live poll socket functionality
