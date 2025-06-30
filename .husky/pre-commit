@@ -1,1 +1,1 @@
-pnpm lint-staged
+npx --no-install pnpm --filter backend lint
