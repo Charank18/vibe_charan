@@ -7,7 +7,8 @@ import FaceDetectors from "@/pages/testing-proctoring/face-detectors";
 import GetCourse from "@/pages/teacher/get-course";
 import GenAIHomePage from "@/pages/teacher/genai-home";
 import TeacherPoll from "@/pages/teacher/LivePoll";
-import TeacherPollRoom from "@/pages/teacher/TeacherPollRoom";
+import PollRoomPage from "@/pages/teacher/TeacherPollRoom";
+import CreateRoomPage from "@/pages/teacher/CreatePollRoom";
 
 const teacherRoutes: RouteObject = {
   path: "/teacher",
@@ -47,7 +48,11 @@ const teacherRoutes: RouteObject = {
     },
     {
       path: "pollroom",
-      element: <TeacherPollRoom />,
+      element: <CreateRoomPage />,
+    },
+    {
+      path: 'pollroom/$code',
+      element: <PollRoomPage />
     },
   ],
 };

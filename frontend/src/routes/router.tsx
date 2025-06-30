@@ -32,10 +32,10 @@ import { useCourseStore } from '@/lib/store/course-store'
 import GenAIHomePage from '@/pages/teacher/genai-home'
 import TeacherPoll from '@/pages/teacher/LivePoll'
 import StudentPoll from '@/pages/student/StudentPoll'
-import JoinRoom from '@/pages/student/StudentPollPage';
-import CreateRoom from '@/pages/teacher/TeacherPollRoom';
 import TeacherPollRoom from '@/pages/teacher/TeacherPollRoom'
-import StudentPollPage from '@/pages/student/StudentPollPage'
+import CreatePollRoom from '@/pages/teacher/CreatePollRoom'
+import JoinPollRoom from '@/pages/student/JoinPollRoom'
+import StudentPollRoom from '@/pages/student/StudentPollRoom'
 
 const sampleText = `
 # 🌟 Sample Markdown Document
@@ -286,8 +286,14 @@ const teacherLivePollRoute = new Route({
 // Teacher poll room route
 const teacherPollRoomRoute = new Route({
   getParentRoute: () => teacherLayoutRoute,
+  path: '/pollroom/$code',
+  component: TeacherPollRoom ,
+});
+
+const teacherCreateRoomRoute = new Route({
+  getParentRoute: () => teacherLayoutRoute,
   path: '/pollroom',
-  component: TeacherPollRoom,
+  component: CreatePollRoom ,
 });
 
 // Teacher create course route
@@ -367,8 +373,15 @@ const studentLivePollRoute = new Route({
 // Student poll room route
 const studentPollRoomRoute = new Route({
   getParentRoute: () => studentLayoutRoute,
+  path: '/pollroom/$code',
+  component: StudentPollRoom,
+});
+
+// Student join room route
+const studentJoinRoomRoute = new Route({
+  getParentRoute: () => studentLayoutRoute,
   path: '/pollroom',
-  component: StudentPollPage,
+  component: JoinPollRoom,
 });
 
 // const parentComponentRoute = new Route({
@@ -419,6 +432,7 @@ const routeTree = rootRoute.addChildren([
     teacherGenAIHomeRoute,
     teacherLivePollRoute,
     teacherPollRoomRoute,
+    teacherCreateRoomRoute,
   ]),
   studentLayoutRoute.addChildren([
     studentDashboardRoute,
@@ -429,6 +443,7 @@ const routeTree = rootRoute.addChildren([
     quizRoute,
     studentLivePollRoute,
     studentPollRoomRoute,
+    studentJoinRoomRoute,
     // parentComponentRoute,
   ]),
   coursePageRoute,

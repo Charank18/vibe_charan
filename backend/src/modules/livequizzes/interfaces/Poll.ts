@@ -5,6 +5,7 @@ export interface Poll {
   roomCode: string;
   creatorId: string;
   createdAt: Date;
+  timer: number;
 }
 
 export interface PollAnswer {

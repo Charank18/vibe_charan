@@ -8,8 +8,8 @@ import CoursePage from "@/pages/student/course-page";
 // import ParentComponent from "@/ai-components/ParentComponent";
 import { Item } from "@/components/Item-container"; // Assuming Item is defined in Item-container
 import StudentPoll from "@/pages/student/StudentPoll"; // Importing the StudentPoll component
-import JoinRoom from "@/pages/student/StudentPollPage"; 
-import StudentPollPage from "@/pages/student/StudentPollPage";
+import JoinPollRoom from "@/pages/student/JoinPollRoom"; 
+import StudentPollRoom from "@/pages/student/StudentPollRoom";
 
 const studentRoutes: RouteObject = {
   path: "/student",
@@ -49,7 +49,11 @@ const studentRoutes: RouteObject = {
     },
     {
       path: "pollroom",
-      element: <StudentPollPage />,
+      element: <JoinPollRoom />,
+    },
+    {
+      path: "pollroom/$code",
+      element: <StudentPollRoom />,
     },
     {
       index: true,
